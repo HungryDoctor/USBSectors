@@ -1,0 +1,48 @@
+﻿<Window x:Class="TestApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestApp"
+        mc:Ignorable="d"
+        Title="MainWindow" SizeToContent="WidthAndHeight" ResizeMode="NoResize" Loaded="Window_Loaded" Closing="Window_Closing" >
+    <Grid>
+        <ComboBox x:Name="comboBox_Devices" SelectionChanged="ComboBox_Devices_SelectionChanged" DisplayMemberPath="DriveLetter" HorizontalAlignment="Left" Margin="56,11,0,0" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,15,0,0" TextWrapping="Wrap" Text="Device: " VerticalAlignment="Top"/>
+
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,15,0,0" TextWrapping="Wrap" Text="Серийный номер:" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_Serial" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,43,0,0" TextWrapping="Wrap" Text="Серийный номер тома:" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_VolumeSerial" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,81,0,0" TextWrapping="Wrap" Text="Имя файловой системы (запрос):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_FileSystemQ" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,76,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,109,0,0" TextWrapping="Wrap" Text="Имя файловой системы (разметка):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_FileSystemM" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,104,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,147,0,0" TextWrapping="Wrap" Text="Байтов в секторе (запрос):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_BytesPerSectorQ" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,142,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,175,0,0" TextWrapping="Wrap" Text="Байтов в секторе (разметка):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_BytesPerSectorM" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,213,0,0" TextWrapping="Wrap" Text="Секторов в кластере (запрос):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_SectorsPerClusterQ" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,208,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,241,0,0" TextWrapping="Wrap" Text="Секторов в кластере (разметка):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_SectorsPerClusterM" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,236,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="185,279,0,0" TextWrapping="Wrap" Text="Зарезеривованых секторов (разметка):" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_ReservedSectorsM" IsReadOnly="True" HorizontalAlignment="Left" Height="23" Margin="414,274,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="230"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="10,356,0,0" TextWrapping="Wrap" Text="Специальный сектор:" VerticalAlignment="Top"/>
+        <TextBox x:Name="textBox_KeySector" IsReadOnly="True" HorizontalAlignment="Left" Height="92" Margin="185,317,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="459"/>
+
+        <Button x:Name="button_GenerateKey" IsEnabled="False" Content="Создать ключ" HorizontalAlignment="Left" Margin="184,419,0,0" VerticalAlignment="Top" Width="100" Click="Button_GenerateKey_Click"/>
+        <Button x:Name="button_WriteKey" IsEnabled="False" Content="Записать ключ" HorizontalAlignment="Left" Margin="544,419,20,20" VerticalAlignment="Top" Width="100" Click="Button_WriteKey_Click"/>
+
+    </Grid>
+</Window>

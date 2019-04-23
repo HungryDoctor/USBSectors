@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{FADF89D4-C89F-4D39-80B4-BABCDC039148}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USBSectors", "USBSectors\USBSectors.csproj", "{1D0DB893-EB3A-4436-844B-662DF3461D64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FADF89D4-C89F-4D39-80B4-BABCDC039148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FADF89D4-C89F-4D39-80B4-BABCDC039148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FADF89D4-C89F-4D39-80B4-BABCDC039148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FADF89D4-C89F-4D39-80B4-BABCDC039148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D0DB893-EB3A-4436-844B-662DF3461D64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D0DB893-EB3A-4436-844B-662DF3461D64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D0DB893-EB3A-4436-844B-662DF3461D64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D0DB893-EB3A-4436-844B-662DF3461D64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DAB4DA2A-9AC6-4907-BFCB-DDC11823A983}
+	EndGlobalSection
+EndGlobal
