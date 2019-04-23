@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using USBSectors.Constants;
+using USBSectors.ConstValues;
 using USBSectors.CustomStructs;
 using USBSectors.CustomStructs.CppStructs;
 using USBSectors.Utils;

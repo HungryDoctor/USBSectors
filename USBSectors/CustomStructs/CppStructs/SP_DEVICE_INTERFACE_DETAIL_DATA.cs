@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using USBSectors.Constants;
+using USBSectors.ConstValues;
 
 namespace USBSectors.CustomStructs.CppStructs
 {

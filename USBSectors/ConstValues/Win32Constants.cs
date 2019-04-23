@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-namespace USBSectors.Constants
+namespace USBSectors.ConstValues
 {
     public static class Win32Constants
     {

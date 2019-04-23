@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using USBSectors;
-using USBSectors.Constants;
+using USBSectors.ConstValues;
 using USBSectors.CustomStructs;
 using USBSectors.CustomStructs.CppStructs;
 using USBSectors.Utils;
