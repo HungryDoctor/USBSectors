@@ -55,7 +55,7 @@
     <Compile Include="Keyboard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Blink.cs" />
-    <Compile Include="ConstValues\Win32ConstValues.cs" />
+    <Compile Include="ConstValues\Win32Constants.cs" />
     <Compile Include="CustomStructs\Enums.cs" />
     <Compile Include="CustomStructs\Events.cs" />
     <Compile Include="UsbDevice.cs" />
