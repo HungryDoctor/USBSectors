@@ -8,6 +8,7 @@
     <owners>hungry_doctor</owners>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/HungryDoctor/UsbSectors</projectUrl>
+	<repository type="git" url="https://github.com/HungryDoctor/UsbSectors" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Library allows to read/write raw sectors from/to USB flash drive, make window blink and change keyboard layout through Win32</description>
     <releaseNotes>Added event helper</releaseNotes>
