@@ -1,0 +1,1 @@
+You have to start test application and than insert USB flash drive
