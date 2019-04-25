@@ -1,30 +1,22 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using USBSectors;
-using USBSectors.ConstValues;
-using USBSectors.CustomStructs;
-using USBSectors.CustomStructs.CppStructs;
-using USBSectors.Utils;
+using USBSectors.Base;
+using USBSectors.CustomStructs.UsbDeviceEvents;
 
 namespace TestApp
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         private readonly ObservableCollection<UsbDeviceArrivedEventArgs> arrivedItems;
-        private IntPtr m_hNotifyDevNode;
-
-        public event EventHandler<UsbDeviceArrivedEventArgs> UsbDeviceArrivedEvent;
-        public event EventHandler<UsbDeviceRemovedEventArgs> UsbDeviceRemovedEvent;
+        private readonly IUsbDeviceEventHelper eventHelper;
 
 
 
@@ -32,8 +24,10 @@ namespace TestApp
         {
             InitializeComponent();
 
-            UsbDeviceArrivedEvent += MainWindow_UsbDeviceArrivedEvent;
-            UsbDeviceRemovedEvent += MainWindow_UsbDeviceRemovedEvent;
+            eventHelper = new UsbDeviceWpfEventHelper(this);
+            eventHelper.UsbDeviceArrivedEvent += UsbDeviceArrivedEvent;
+            eventHelper.UsbDeviceRemovedEvent += UsbDeviceRemovedEvent;
+            eventHelper.UsbDeviceErrorEvent += UsbDeviceErrorEvent;
 
             arrivedItems = new ObservableCollection<UsbDeviceArrivedEventArgs>();
             comboBox_Devices.ItemsSource = arrivedItems;
@@ -41,10 +35,15 @@ namespace TestApp
 
 
 
+        public void Dispose()
+        {
+            eventHelper?.Dispose();
+        }
+
         private void ComboBox_Devices_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            button_GenerateKey.IsEnabled = false;
-            button_WriteKey.IsEnabled = false;
+            button_GenerateData.IsEnabled = false;
+            button_WriteData.IsEnabled = false;
 
             if (e.AddedItems.OfType<UsbDeviceArrivedEventArgs>().SingleOrDefault() is UsbDeviceArrivedEventArgs args)
             {
@@ -68,29 +67,29 @@ namespace TestApp
                 textBox_ReservedSectorsM.Text = bootSectorInfo?.ReservedSectors.ToString();
 
 
-                if (TryGetKey(args, out var key))
+                if (TryGetData(args, out var data))
                 {
-                    bool keyFound = false;
+                    bool dataFound = false;
 
-                    button_GenerateKey.IsEnabled = true;
-                    button_WriteKey.IsEnabled = true;
+                    button_GenerateData.IsEnabled = true;
+                    //button_WriteData.IsEnabled = true;
 
-                    for (int x = 0; x < key.Length; x++)
+                    for (int x = 0; x < data.Length; x++)
                     {
-                        if (key[x] != 0)
+                        if (data[x] != 0)
                         {
-                            keyFound = true;
+                            dataFound = true;
                             break;
                         }
                     }
 
-                    if (keyFound)
+                    if (dataFound)
                     {
-                        textBox_KeySector.Text = Encoding.ASCII.GetString(key);
+                        textBox_DataSector.Text = Encoding.ASCII.GetString(data);
                     }
                     else
                     {
-                        textBox_KeySector.Text = "";
+                        textBox_DataSector.Text = "";
                     }
                 }
             }
@@ -113,13 +112,13 @@ namespace TestApp
             }
         }
 
-        private void Button_GenerateKey_Click(object sender, RoutedEventArgs e)
+        private void Button_GenerateData_Click(object sender, RoutedEventArgs e)
         {
             var selectedIndex = comboBox_Devices.SelectedIndex;
             if (selectedIndex > -1)
             {
                 var selectedItem = arrivedItems[selectedIndex];
-                if (selectedItem.USBDeviceInfo.DiskSpaceLayout?.lpBytesPerSector >= 64 && TryGetKey(selectedItem, out var key))
+                if (selectedItem.USBDeviceInfo.DiskSpaceLayout?.lpBytesPerSector >= 64 && TryGetData(selectedItem, out var data))
                 {
                     const byte offset = 33;
                     var bytes = new byte[64];
@@ -128,12 +127,14 @@ namespace TestApp
                         bytes[x] = (byte)(x + offset);
                     }
 
-                    textBox_KeySector.Text = Encoding.ASCII.GetString(bytes);
+                    textBox_DataSector.Text = Encoding.ASCII.GetString(bytes);
                 }
             }
         }
 
-        private void Button_WriteKey_Click(object sender, RoutedEventArgs e)
+
+        //Not tested yet
+        private void Button_WriteData_Click(object sender, RoutedEventArgs e)
         {
             var selectedIndex = comboBox_Devices.SelectedIndex;
             if (selectedIndex > -1)
@@ -142,9 +143,9 @@ namespace TestApp
                 var layout = selectedItem.USBDeviceInfo.DiskSpaceLayout;
                 var bootSectorInfo = selectedItem.USBDeviceInfo.BootSectorInfo;
 
-                if (layout?.lpBytesPerSector >= 64 && TryGetKey(selectedItem, out var key))
+                if (layout?.lpBytesPerSector >= 64 && TryGetData(selectedItem, out var data))
                 {
-                    var bytes = Encoding.ASCII.GetBytes(textBox_KeySector.Text);
+                    var bytes = Encoding.ASCII.GetBytes(textBox_DataSector.Text);
 
                     UsbDevice.WriteSector(selectedItem.DriveLetter, layout.Value, bootSectorInfo.SectorsPerCluster - 1, bytes);
                 }
@@ -152,7 +153,7 @@ namespace TestApp
         }
 
 
-        private void MainWindow_UsbDeviceArrivedEvent(object sender, UsbDeviceArrivedEventArgs e)
+        private void UsbDeviceArrivedEvent(object sender, UsbDeviceArrivedEventArgs e)
         {
             arrivedItems.Add(e);
 
@@ -162,7 +163,7 @@ namespace TestApp
             }
         }
 
-        private void MainWindow_UsbDeviceRemovedEvent(object sender, UsbDeviceRemovedEventArgs e)
+        private void UsbDeviceRemovedEvent(object sender, UsbDeviceRemovedEventArgs e)
         {
             var item = arrivedItems.FirstOrDefault(x => x.DriveLetter == e.DriveLetter);
             if (item != null)
@@ -171,88 +172,15 @@ namespace TestApp
             }
         }
 
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void UsbDeviceErrorEvent(object sender, UsbDeviceExceptionEventArgs e)
         {
-            HwndSource source = PresentationSource.FromVisual(this) as HwndSource;
-            source.AddHook(WndProc);
-
-            m_hNotifyDevNode = Win32Utils.RegisterNotification(Win32Constants.GUID_DEVINTERFACE_DISK, new WindowInteropHelper(this).Handle);
-        }
-
-        private void Window_Closing(object sender, CancelEventArgs e)
-        {
-            Win32Utils.UnregisterNotification(m_hNotifyDevNode);
-        }
-
-        protected IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-        {
-            if (msg == Win32Constants.WM_DEVICECHANGE)
-            {
-                int nEventType = wParam.ToInt32();
-
-                if (nEventType == Win32Constants.DBT_DEVICEARRIVAL || nEventType == Win32Constants.DBT_DEVICEREMOVECOMPLETE)
-                {
-                    DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
-                    Marshal.PtrToStructure(lParam, hdr);
-
-                    if (hdr.dbch_devicetype == Win32Constants.DBT_DEVTYP_VOLUME)
-                    {
-                        DEV_BROADCAST_VOLUME volume = new DEV_BROADCAST_VOLUME();
-                        Marshal.PtrToStructure(lParam, volume);
-
-                        if (nEventType == Win32Constants.DBT_DEVICEREMOVECOMPLETE)
-                        {
-                            UsbDeviceRemovedEventArgs eventArgs = null;
-
-                            try
-                            {
-                                var driveLetter = UsbDevice.DriveMaskToLetter(volume.dbcv_unitmask);
-
-                                eventArgs = new UsbDeviceRemovedEventArgs(driveLetter);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(ex.Message, "");
-                            }
-
-                            if (eventArgs != null)
-                            {
-                                UsbDeviceRemovedEvent?.Invoke(this, eventArgs);
-                            }
-                        }
-                        else if (nEventType == Win32Constants.DBT_DEVICEARRIVAL)
-                        {
-                            UsbDeviceArrivedEventArgs eventArgs = null;
-
-                            try
-                            {
-                                var driveLetter = UsbDevice.DriveMaskToLetter(volume.dbcv_unitmask);
-                                var usbDeviceInfo = UsbDevice.GetUSBDeviceInfo(driveLetter);
-
-                                eventArgs = new UsbDeviceArrivedEventArgs(driveLetter, usbDeviceInfo);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(ex.Message, "");
-                            }
-
-                            if (eventArgs != null)
-                            {
-                                UsbDeviceArrivedEvent?.Invoke(this, eventArgs);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return IntPtr.Zero;
+            MessageBox.Show(e.Exception.Message);
         }
 
 
-        private bool TryGetKey(UsbDeviceArrivedEventArgs arrivedItem, out byte[] key)
+        private bool TryGetData(UsbDeviceArrivedEventArgs arrivedItem, out byte[] data)
         {
-            key = null;
+            data = null;
 
             var diskSpaceLayout = arrivedItem.USBDeviceInfo.DiskSpaceLayout;
             var bootSectorInfo = arrivedItem.USBDeviceInfo.BootSectorInfo;
@@ -262,10 +190,10 @@ namespace TestApp
                 && diskSpaceLayout.Value.lpSectorsPerCluster == bootSectorInfo.SectorsPerCluster
                 && bootSectorInfo.ReservedSectors > 1)
             {
-                key = UsbDevice.ReadSector(arrivedItem.DriveLetter, diskSpaceLayout.Value, bootSectorInfo.SectorsPerCluster - 1);
+                data = UsbDevice.ReadSector(arrivedItem.DriveLetter, diskSpaceLayout.Value, bootSectorInfo.SectorsPerCluster - 1);
             }
 
-            return key != null;
+            return data != null;
         }
     }
 }

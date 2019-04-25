@@ -73,6 +73,9 @@ namespace USBSectors.Utils
 
         #region Kernel32
 
+        [DllImport("kernel32")]
+        public static extern bool CloseHandle(IntPtr handle);
+
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern SafeFileHandle CreateFile(
             [In] [MarshalAs(UnmanagedType.LPWStr)] string filename,

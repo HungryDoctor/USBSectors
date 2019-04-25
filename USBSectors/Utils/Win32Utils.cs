@@ -12,34 +12,6 @@ namespace USBSectors.Utils
     {
         #region Public
 
-        public static IntPtr RegisterNotification(Guid guid, IntPtr handle)
-        {
-            IntPtr result;
-
-            DEV_BROADCAST_DEVICEINTERFACE devIF = new DEV_BROADCAST_DEVICEINTERFACE();
-            IntPtr devIFBuffer;
-
-            devIF.dbcc_size = Marshal.SizeOf(devIF);
-            devIF.dbcc_devicetype = Win32Constants.DBT_DEVTYP_DEVICEINTERFACE;
-            devIF.dbcc_reserved = 0;
-            devIF.dbcc_classguid = guid;
-
-            devIFBuffer = Marshal.AllocHGlobal(devIF.dbcc_size);
-            Marshal.StructureToPtr(devIF, devIFBuffer, true);
-
-            result = NativeMethods.RegisterDeviceNotification(handle, devIFBuffer, Win32Constants.DEVICE_NOTIFY_WINDOW_HANDLE);
-
-            Marshal.PtrToStructure(devIFBuffer, devIF);
-            Marshal.FreeHGlobal(devIFBuffer);
-
-            return result;
-        }
-
-        public static uint UnregisterNotification(IntPtr m_hNotifyDevNode)
-        {
-            return NativeMethods.UnregisterDeviceNotification(m_hNotifyDevNode);
-        }
-
         public static IntPtr GetForegroundWindow()
         {
             return NativeMethods.GetForegroundWindow();
@@ -96,6 +68,33 @@ namespace USBSectors.Utils
         #endregion
 
 
+        internal static IntPtr RegisterNotification(Guid guid, IntPtr handle)
+        {
+            IntPtr result;
+
+            DEV_BROADCAST_DEVICEINTERFACE devIF = new DEV_BROADCAST_DEVICEINTERFACE();
+            IntPtr devIFBuffer;
+
+            devIF.dbcc_size = Marshal.SizeOf(devIF);
+            devIF.dbcc_devicetype = Win32Constants.DBT_DEVTYP_DEVICEINTERFACE;
+            devIF.dbcc_reserved = 0;
+            devIF.dbcc_classguid = guid;
+
+            devIFBuffer = Marshal.AllocHGlobal(devIF.dbcc_size);
+            Marshal.StructureToPtr(devIF, devIFBuffer, true);
+
+            result = NativeMethods.RegisterDeviceNotification(handle, devIFBuffer, Win32Constants.DEVICE_NOTIFY_WINDOW_HANDLE);
+
+            Marshal.PtrToStructure(devIFBuffer, devIF);
+            Marshal.FreeHGlobal(devIFBuffer);
+
+            return result;
+        }
+
+        internal static uint UnregisterNotification(IntPtr m_hNotifyDevNode)
+        {
+            return NativeMethods.UnregisterDeviceNotification(m_hNotifyDevNode);
+        }
 
         internal static bool SetLanguage(LanguageId languageId)
         {

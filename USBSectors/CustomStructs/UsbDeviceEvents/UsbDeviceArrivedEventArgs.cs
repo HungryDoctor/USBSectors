@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace USBSectors.CustomStructs
+namespace USBSectors.CustomStructs.UsbDeviceEvents
 {
     public class UsbDeviceArrivedEventArgs : EventArgs
     {
@@ -15,17 +15,4 @@ namespace USBSectors.CustomStructs
             this.USBDeviceInfo = deviceInfo;
         }
     }
-
-    public class UsbDeviceRemovedEventArgs : EventArgs
-    {
-        public char DriveLetter { get; }
-
-
-
-        public UsbDeviceRemovedEventArgs(char driveLetter)
-        {
-            this.DriveLetter = driveLetter;
-        }
-    }
-
 }
