@@ -13,6 +13,6 @@
     <description>Library allows to read/write raw sectors from/to USB flash drive, make window blink and change keyboard layout through Win32</description>
     <releaseNotes>Added event helper</releaseNotes>
     <copyright>Copyright 2019</copyright>
-    <tags>win32 usb flash drive keyboard blink sector raw</tags>
+    <tags>win32 usb flash drive keyboard blink sector raw WinAPI</tags>
   </metadata>
 </package>
