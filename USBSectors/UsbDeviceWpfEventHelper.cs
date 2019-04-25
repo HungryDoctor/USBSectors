@@ -15,6 +15,7 @@ namespace USBSectors
         private volatile bool _disposed;
         private IntPtr m_hNotifyDevNode;
         private readonly Window _window;
+        private HwndSource hwndSource;
 
         public event EventHandler<UsbDeviceArrivedEventArgs> UsbDeviceArrivedEvent;
         public event EventHandler<UsbDeviceRemovedEventArgs> UsbDeviceRemovedEvent;
@@ -64,6 +65,7 @@ namespace USBSectors
                 Win32Utils.UnregisterNotification(m_hNotifyDevNode);
                 NativeMethods.CloseHandle(m_hNotifyDevNode);
                 m_hNotifyDevNode = IntPtr.Zero;
+                hwndSource.Dispose();
 
                 _disposed = true;
             }
@@ -75,8 +77,8 @@ namespace USBSectors
             var handle = new WindowInteropHelper(_window).Handle;
             m_hNotifyDevNode = Win32Utils.RegisterNotification(Win32Constants.GUID_DEVINTERFACE_DISK, handle);
 
-            var source = HwndSource.FromHwnd(handle);
-            source?.AddHook(WndProc);
+            hwndSource = HwndSource.FromHwnd(handle);
+            hwndSource?.AddHook(WndProc);
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
