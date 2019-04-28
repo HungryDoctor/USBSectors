@@ -63,8 +63,7 @@ namespace USBSectors
 
                 //unmanaged
                 Win32Utils.UnregisterNotification(m_hNotifyDevNode);
-                NativeMethods.CloseHandle(m_hNotifyDevNode);
-                m_hNotifyDevNode = IntPtr.Zero;
+                Marshal.FreeHGlobal(m_hNotifyDevNode);
                 hwndSource.Dispose();
 
                 _disposed = true;
