@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using USBSectors;
 using USBSectors.Base;
 using USBSectors.CustomStructs.UsbDeviceEvents;
+using USBSectors.Utils;
 
 namespace TestApp
 {
@@ -85,7 +86,7 @@ namespace TestApp
 
                     if (dataFound)
                     {
-                        textBox_DataSector.Text = Encoding.ASCII.GetString(data);
+                        textBox_DataSector.Text = Win32Utils.ReadNullTerminatedString(data, 0, Encoding.ASCII);
                     }
                     else
                     {
@@ -109,6 +110,8 @@ namespace TestApp
                 textBox_SectorsPerClusterM.Text = "";
 
                 textBox_ReservedSectorsM.Text = "";
+
+                textBox_DataSector.Text = "";
             }
         }
 
@@ -133,7 +136,6 @@ namespace TestApp
         }
 
 
-        //Not tested yet
         private void Button_WriteData_Click(object sender, RoutedEventArgs e)
         {
             var selectedIndex = comboBox_Devices.SelectedIndex;

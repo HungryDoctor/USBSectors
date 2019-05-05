@@ -293,11 +293,11 @@ namespace USBSectors
         {
             SafeFileHandle handle = NativeMethods.CreateFile(
                 filePath,
-                EFileAccess.GenericWrite | EFileAccess.FILE_GENERIC_READ,
+                EFileAccess.GenericWrite | EFileAccess.GenericRead,
                 EFileShare.Read | EFileShare.Write,
                 IntPtr.Zero,
                 ECreationDisposition.OpenExisting,
-                EFileAttributes.Normal,
+                EFileAttributes.Normal | EFileAttributes.NoBuffering | EFileAttributes.Write_Through,
                 IntPtr.Zero);
 
             if (handle.IsInvalid)
@@ -356,6 +356,20 @@ namespace USBSectors
 
         public static void WriteSector(SafeFileHandle safeHandle, DiskSpaceLayout diskSpaceLayout, uint sectorNumber, byte[] bytesToWrite)
         {
+            if (bytesToWrite.Length > diskSpaceLayout.lpBytesPerSector)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bytesToWrite), "You can write less or equal to disk layout bytes per sector count");
+            }
+            else if (bytesToWrite.Length != diskSpaceLayout.lpBytesPerSector)
+            {
+                var additionalBytes = (int)(diskSpaceLayout.lpBytesPerSector - bytesToWrite.Length);
+                if (additionalBytes != 0)
+                {
+                    Array.Resize(ref bytesToWrite, bytesToWrite.Length + additionalBytes);
+                }
+            }
+
+
             if (!NativeMethods.SetFilePointerEx(safeHandle, sectorNumber * diskSpaceLayout.lpBytesPerSector, out long newFilePointer, EMoveMethod.Begin))
             {
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());

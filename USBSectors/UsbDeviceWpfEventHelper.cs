@@ -58,6 +58,7 @@ namespace USBSectors
             if (!_disposed)
             {
                 Win32Utils.UnregisterNotification(m_hNotifyDevNode);
+                m_hNotifyDevNode = IntPtr.Zero;
                 hwndSource.Dispose();
 
                 _disposed = true;
