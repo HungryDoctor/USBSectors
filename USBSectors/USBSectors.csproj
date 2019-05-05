@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -54,8 +56,25 @@
     <Compile Include="CustomStructs\CppStructs\STORAGE_DEVICE_NUMBER.cs" />
     <Compile Include="CustomStructs\DeviceInfo.cs" />
     <Compile Include="CustomStructs\DiskSpaceLayout.cs" />
+    <Compile Include="CustomStructs\Enums\DeviceControlCode.cs" />
+    <Compile Include="CustomStructs\Enums\DeviceEvent.cs" />
+    <Compile Include="CustomStructs\Enums\DeviceType.cs" />
+    <Compile Include="CustomStructs\Enums\DiGetClassFlags.cs" />
+    <Compile Include="CustomStructs\Enums\DriveType.cs" />
+    <Compile Include="CustomStructs\Enums\ECreationDisposition.cs" />
+    <Compile Include="CustomStructs\Enums\EFileAccess.cs" />
+    <Compile Include="CustomStructs\Enums\EFileAttributes.cs" />
+    <Compile Include="CustomStructs\Enums\EFileShare.cs" />
+    <Compile Include="CustomStructs\Enums\EFileSystemFeature.cs" />
+    <Compile Include="CustomStructs\Enums\EMoveMethod.cs" />
+    <Compile Include="CustomStructs\Enums\FATxType.cs" />
+    <Compile Include="CustomStructs\Enums\FlashWSettings.cs" />
+    <Compile Include="CustomStructs\Enums\HKL.cs" />
+    <Compile Include="CustomStructs\Enums\KLF.cs" />
+    <Compile Include="CustomStructs\Enums\LanguageId.cs" />
+    <Compile Include="CustomStructs\Enums\StorageBusType.cs" />
     <Compile Include="CustomStructs\IdleTimeInfo.cs" />
-    <Compile Include="CustomStructs\StirageDeviceInfo.cs" />
+    <Compile Include="CustomStructs\StorageDeviceInfo.cs" />
     <Compile Include="CustomStructs\UsbDeviceEvents\UsbDeviceArrivedEventArgs.cs" />
     <Compile Include="CustomStructs\UsbDeviceEvents\UsbDeviceExceptionEventArgs.cs" />
     <Compile Include="CustomStructs\UsbDeviceInfo.cs" />
@@ -65,9 +84,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Blink.cs" />
     <Compile Include="ConstValues\Win32Constants.cs" />
-    <Compile Include="CustomStructs\Enums.cs" />
     <Compile Include="UsbDevice.cs" />
     <Compile Include="UsbDeviceWpfEventHelper.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\Win32Utils.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
   </ItemGroup>

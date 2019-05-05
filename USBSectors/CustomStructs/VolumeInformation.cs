@@ -1,4 +1,6 @@
-﻿namespace USBSectors.CustomStructs
+﻿using USBSectors.CustomStructs.Enums;
+
+namespace USBSectors.CustomStructs
 {
     public struct VolumeInformation
     {

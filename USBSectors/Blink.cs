@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using USBSectors.ConstValues;
-using USBSectors.CustomStructs;
 using USBSectors.CustomStructs.CppStructs;
+using USBSectors.CustomStructs.Enums;
 using USBSectors.Utils;
 
 namespace USBSectors

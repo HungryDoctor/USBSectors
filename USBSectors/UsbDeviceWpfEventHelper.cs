@@ -5,6 +5,7 @@ using System.Windows.Interop;
 using USBSectors.Base;
 using USBSectors.ConstValues;
 using USBSectors.CustomStructs.CppStructs;
+using USBSectors.CustomStructs.Enums;
 using USBSectors.CustomStructs.UsbDeviceEvents;
 using USBSectors.Utils;
 
@@ -56,14 +57,7 @@ namespace USBSectors
         {
             if (!_disposed)
             {
-                if (disposing)
-                {
-                    //managed
-                }
-
-                //unmanaged
                 Win32Utils.UnregisterNotification(m_hNotifyDevNode);
-                Marshal.FreeHGlobal(m_hNotifyDevNode);
                 hwndSource.Dispose();
 
                 _disposed = true;
@@ -82,45 +76,40 @@ namespace USBSectors
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == Win32Constants.WM_DEVICECHANGE)
+            if (msg == Win32Constants.WM_DEVICECHANGE && wParam.ToInt32().TryConvertToEnum<DeviceEvent>(out var nEventType) && (nEventType == DeviceEvent.DEVICEARRIVAL || nEventType == DeviceEvent.DEVICEREMOVECOMPLETE))
             {
-                int nEventType = wParam.ToInt32();
+                DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
+                Marshal.PtrToStructure(lParam, hdr);
 
-                if (nEventType == Win32Constants.DBT_DEVICEARRIVAL || nEventType == Win32Constants.DBT_DEVICEREMOVECOMPLETE)
+                if (hdr.dbch_devicetype == Win32Constants.DBT_DEVTYP_VOLUME)
                 {
-                    DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
-                    Marshal.PtrToStructure(lParam, hdr);
+                    DEV_BROADCAST_VOLUME volume = new DEV_BROADCAST_VOLUME();
+                    Marshal.PtrToStructure(lParam, volume);
 
-                    if (hdr.dbch_devicetype == Win32Constants.DBT_DEVTYP_VOLUME)
+                    if (nEventType == DeviceEvent.DEVICEREMOVECOMPLETE)
                     {
-                        DEV_BROADCAST_VOLUME volume = new DEV_BROADCAST_VOLUME();
-                        Marshal.PtrToStructure(lParam, volume);
-
-                        if (nEventType == Win32Constants.DBT_DEVICEREMOVECOMPLETE)
+                        try
                         {
-                            try
-                            {
-                                var driveLetter = UsbDevice.DriveMaskToLetter(volume.dbcv_unitmask);
-                                UsbDeviceRemovedEvent?.Invoke(this, new UsbDeviceRemovedEventArgs(driveLetter));
-                            }
-                            catch (Exception e)
-                            {
-                                UsbDeviceErrorEvent?.Invoke(this, new UsbDeviceExceptionEventArgs(e));
-                            }
+                            var driveLetter = UsbDevice.DriveMaskToLetter(volume.dbcv_unitmask);
+                            UsbDeviceRemovedEvent?.Invoke(this, new UsbDeviceRemovedEventArgs(driveLetter));
                         }
-                        else if (nEventType == Win32Constants.DBT_DEVICEARRIVAL)
+                        catch (Exception e)
                         {
-                            try
-                            {
-                                var driveLetter = UsbDevice.DriveMaskToLetter(volume.dbcv_unitmask);
-                                var usbDeviceInfo = UsbDevice.GetUSBDeviceInfo(driveLetter);
+                            UsbDeviceErrorEvent?.Invoke(this, new UsbDeviceExceptionEventArgs(e));
+                        }
+                    }
+                    else if (nEventType == DeviceEvent.DEVICEARRIVAL)
+                    {
+                        try
+                        {
+                            var driveLetter = UsbDevice.DriveMaskToLetter(volume.dbcv_unitmask);
+                            var usbDeviceInfo = UsbDevice.GetUSBDeviceInfo(driveLetter);
 
-                                UsbDeviceArrivedEvent?.Invoke(this, new UsbDeviceArrivedEventArgs(driveLetter, usbDeviceInfo));
-                            }
-                            catch (Exception e)
-                            {
-                                UsbDeviceErrorEvent?.Invoke(this, new UsbDeviceExceptionEventArgs(e));
-                            }
+                            UsbDeviceArrivedEvent?.Invoke(this, new UsbDeviceArrivedEventArgs(driveLetter, usbDeviceInfo));
+                        }
+                        catch (Exception e)
+                        {
+                            UsbDeviceErrorEvent?.Invoke(this, new UsbDeviceExceptionEventArgs(e));
                         }
                     }
                 }

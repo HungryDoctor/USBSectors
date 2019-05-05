@@ -6,6 +6,7 @@ using System.Text;
 using USBSectors.ConstValues;
 using USBSectors.CustomStructs;
 using USBSectors.CustomStructs.CppStructs;
+using USBSectors.CustomStructs.Enums;
 using USBSectors.Utils;
 
 namespace USBSectors
@@ -28,7 +29,7 @@ namespace USBSectors
                 var volumeInfo = GetVolumeInformation(handle);
                 fileSystemName = volumeInfo.FileSystemName;
 
-                deviceNumber = Win32Utils.DeviceIoControlAction<STORAGE_DEVICE_NUMBER>(handle, Win32Constants.IOCTL_STORAGE_GET_DEVICE_NUMBER).Item1;
+                deviceNumber = Win32Utils.DeviceIoControlAction<STORAGE_DEVICE_NUMBER>(handle, DeviceControlCode.STORAGE_GET_DEVICE_NUMBER).Item1;
             }
 
             var bootSectorInfo = ParseBootSector(bootSectorData, fileSystemName);
@@ -60,7 +61,7 @@ namespace USBSectors
             string deviceId = "";
 
             var foundItem = GetRemovableDriveDeviceIds(driveType, deviceNumber.DeviceType).Find(x => x.StorageDeviceNumber.DeviceNumber == deviceNumber.DeviceNumber);
-            if (!default(StirageDeviceInfo).Equals(foundItem))
+            if (!default(StorageDeviceInfo).Equals(foundItem))
             {
                 deviceId = foundItem.InstanceID;
             }
@@ -68,11 +69,11 @@ namespace USBSectors
             return deviceId;
         }
 
-        public static List<StirageDeviceInfo> GetRemovableDriveDeviceIds(DriveType driveType, DEVICE_TYPE deviceType)
+        public static List<StorageDeviceInfo> GetRemovableDriveDeviceIds(DriveType driveType, DeviceType deviceType)
         {
-            List<StirageDeviceInfo> devices = new List<StirageDeviceInfo>();
+            List<StorageDeviceInfo> devices = new List<StorageDeviceInfo>();
 
-            if (driveType == DriveType.Removable && deviceType == DEVICE_TYPE.FILE_DEVICE_DISK)
+            if (driveType == DriveType.Removable && deviceType == DeviceType.FILE_DEVICE_DISK)
             {
                 var guid = Win32Constants.GUID_DEVINTERFACE_DISK;
 
@@ -148,9 +149,9 @@ namespace USBSectors
 
                                 using (SafeFileHandle handle = CreateDeviceNoRightsHandle(didd.DevicePath))
                                 {
-                                    var deviceNumber = Win32Utils.DeviceIoControlAction<STORAGE_DEVICE_NUMBER>(handle, Win32Constants.IOCTL_STORAGE_GET_DEVICE_NUMBER);
+                                    var deviceNumber = Win32Utils.DeviceIoControlAction<STORAGE_DEVICE_NUMBER>(handle, DeviceControlCode.STORAGE_GET_DEVICE_NUMBER);
 
-                                    StirageDeviceInfo info = new StirageDeviceInfo
+                                    StorageDeviceInfo info = new StorageDeviceInfo
                                     {
                                         StorageDeviceNumber = deviceNumber.Item1,
                                         StorageDeviceNumberRaw = deviceNumber.Item2,
@@ -196,15 +197,13 @@ namespace USBSectors
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
 
-            VolumeInformation info = new VolumeInformation
+            return new VolumeInformation
             {
                 Name = nameBuffer.ToString().Trim(),
                 FileSystemName = fileSystemBuffer.ToString().Trim(),
                 FileSystemFeature = flag,
                 SerialNumber = serialNumber
             };
-
-            return info;
         }
 
 
@@ -217,31 +216,23 @@ namespace USBSectors
 
         public static DiskSpaceLayout GetDiskLayout(string drivePath)
         {
-            DiskSpaceLayout info = new DiskSpaceLayout();
-
-            uint lpSectorsPerCluster;
-            uint lpBytesPerSector;
-            uint lpNumberOfFreeClusters;
-            uint lpTotalNumberOfClusters;
-
-
             if (!NativeMethods.GetDiskFreeSpace(
                 drivePath,
-                out lpSectorsPerCluster,
-                out lpBytesPerSector,
-                out lpNumberOfFreeClusters,
-                out lpTotalNumberOfClusters))
+                out uint lpSectorsPerCluster,
+                out uint lpBytesPerSector,
+                out uint lpNumberOfFreeClusters,
+                out uint lpTotalNumberOfClusters))
             {
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
 
-
-            info.lpSectorsPerCluster = lpSectorsPerCluster;
-            info.lpBytesPerSector = lpBytesPerSector;
-            info.lpNumberOfFreeClusters = lpNumberOfFreeClusters;
-            info.lpTotalNumberOfClusters = lpTotalNumberOfClusters;
-
-            return info;
+            return new DiskSpaceLayout
+            {
+                lpSectorsPerCluster = lpSectorsPerCluster,
+                lpBytesPerSector = lpBytesPerSector,
+                lpNumberOfFreeClusters = lpNumberOfFreeClusters,
+                lpTotalNumberOfClusters = lpTotalNumberOfClusters
+            };
         }
 
         #endregion
@@ -302,8 +293,8 @@ namespace USBSectors
         {
             SafeFileHandle handle = NativeMethods.CreateFile(
                 filePath,
-                EFileAccess.GenericWrite,
-                EFileShare.Read,
+                EFileAccess.GenericWrite | EFileAccess.FILE_GENERIC_READ,
+                EFileShare.Read | EFileShare.Write,
                 IntPtr.Zero,
                 ECreationDisposition.OpenExisting,
                 EFileAttributes.Normal,
@@ -337,7 +328,7 @@ namespace USBSectors
         {
             byte[] buffer = new byte[diskSpaceLayout.lpBytesPerSector];
 
-            if (!NativeMethods.SetFilePointerEx(safeHandle, sectorNumber * diskSpaceLayout.lpBytesPerSector, out long newFilePointer, EMoveMethod.Current))
+            if (!NativeMethods.SetFilePointerEx(safeHandle, sectorNumber * diskSpaceLayout.lpBytesPerSector, out long newFilePointer, EMoveMethod.Begin))
             {
                 Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
             }
@@ -357,23 +348,38 @@ namespace USBSectors
 
         public static void WriteSector(char driveLetter, DiskSpaceLayout diskSpaceLayout, uint sectorNumber, byte[] bytesToWrite)
         {
-            //using (SafeFileHandle handle = CreateDeviceWriteHandle(driveLetter))
-            //{
-            //    WriteSector(handle, diskSpaceLayout, sectorNumber, bytesToWrite);
-            //}
+            using (SafeFileHandle handle = CreateDeviceWriteHandle(driveLetter))
+            {
+                WriteSector(handle, diskSpaceLayout, sectorNumber, bytesToWrite);
+            }
         }
 
         public static void WriteSector(SafeFileHandle safeHandle, DiskSpaceLayout diskSpaceLayout, uint sectorNumber, byte[] bytesToWrite)
         {
-            //if (!NativeMethods.SetFilePointerEx(safeHandle, sectorNumber * diskSpaceLayout.lpBytesPerSector, out long newFilePointer, EMoveMethod.Current))
-            //{
-            //    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
-            //}
+            if (!NativeMethods.SetFilePointerEx(safeHandle, sectorNumber * diskSpaceLayout.lpBytesPerSector, out long newFilePointer, EMoveMethod.Begin))
+            {
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+            }
 
-            //if (!NativeMethods.WriteFile(safeHandle, bytesToWrite, (uint)bytesToWrite.Length, out var bytesWritten) || bytesWritten != bytesToWrite.Length)
-            //{
-            //    Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
-            //}
+            if (!NativeMethods.DeviceIoControl(safeHandle, DeviceControlCode.LOCK_VOLUME, null, 0, null, 0, out var intOut, IntPtr.Zero))
+            {
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+            }
+
+            if (!NativeMethods.DeviceIoControl(safeHandle, DeviceControlCode.DISMOUNT_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero))
+            {
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+            }
+
+            if (!NativeMethods.WriteFile(safeHandle, bytesToWrite, (uint)bytesToWrite.Length, out var bytesWritten) || bytesWritten != bytesToWrite.Length)
+            {
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+            }
+
+            if (!NativeMethods.DeviceIoControl(safeHandle, DeviceControlCode.UNLOCK_VOLUME, null, 0, null, 0, out intOut, IntPtr.Zero))
+            {
+                Marshal.ThrowExceptionForHR(Marshal.GetHRForLastWin32Error());
+            }
         }
 
         #endregion

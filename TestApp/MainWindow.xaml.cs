@@ -72,7 +72,7 @@ namespace TestApp
                     bool dataFound = false;
 
                     button_GenerateData.IsEnabled = true;
-                    //button_WriteData.IsEnabled = true;
+                    button_WriteData.IsEnabled = true;
 
                     for (int x = 0; x < data.Length; x++)
                     {

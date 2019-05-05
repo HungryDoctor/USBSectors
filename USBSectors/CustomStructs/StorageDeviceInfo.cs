@@ -2,7 +2,7 @@
 
 namespace USBSectors.CustomStructs
 {
-    public struct StirageDeviceInfo
+    public struct StorageDeviceInfo
     {
         public STORAGE_DEVICE_NUMBER StorageDeviceNumber;
         public byte[] StorageDeviceNumberRaw;

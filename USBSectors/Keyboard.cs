@@ -1,5 +1,5 @@
 ﻿using System;
-using USBSectors.CustomStructs;
+using USBSectors.CustomStructs.Enums;
 using USBSectors.Utils;
 
 namespace USBSectors

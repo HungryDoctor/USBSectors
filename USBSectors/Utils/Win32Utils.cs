@@ -5,6 +5,7 @@ using System.Text;
 using USBSectors.ConstValues;
 using USBSectors.CustomStructs;
 using USBSectors.CustomStructs.CppStructs;
+using USBSectors.CustomStructs.Enums;
 
 namespace USBSectors.Utils
 {
@@ -125,7 +126,7 @@ namespace USBSectors.Utils
         }
 
 
-        internal static Tuple<T, byte[]> DeviceIoControlAction<T>(SafeFileHandle safeHandle, uint controlCode, int outputSize = Win32Constants.SIZE_OUTPUT) where T : struct
+        internal static Tuple<T, byte[]> DeviceIoControlAction<T>(SafeFileHandle safeHandle, DeviceControlCode controlCode, int outputSize = Win32Constants.SIZE_OUTPUT) where T : struct
         {
             byte[] outputBuffer = new byte[outputSize];
 
@@ -150,7 +151,7 @@ namespace USBSectors.Utils
             return new Tuple<T, byte[]>(result, outputBuffer);
         }
 
-        internal static Tuple<T, byte[]> DeviceIoControlAction<T, U>(SafeFileHandle safeHandle, uint controlCode, U input, int outputSize = Win32Constants.SIZE_OUTPUT) where T : struct where U : struct
+        internal static Tuple<T, byte[]> DeviceIoControlAction<T, U>(SafeFileHandle safeHandle, DeviceControlCode controlCode, U input, int outputSize = Win32Constants.SIZE_OUTPUT) where T : struct where U : struct
         {
             var inputSize = Marshal.SizeOf(input);
             var inputPtr = Marshal.AllocHGlobal(inputSize);
