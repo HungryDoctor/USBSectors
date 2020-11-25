@@ -1,94 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1D0DB893-EB3A-4436-844B-662DF3461D64}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>USBSectors</RootNamespace>
-    <AssemblyName>USBSectors</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworks>net451;netcoreapp3.1-windows</TargetFrameworks>
+    <Product>USBSectors library</Product>
+    <Description>Library allows to read/write raw sectors from/to USB flash drive, make window blink and change keyboard layout through Win32</Description>
+    <Authors>hungry_doctor</Authors>
+    <Company>hungry_doctor</Company>
+    <Copyright>Copyright 2020</Copyright>
+    <PackageId>USBSectors</PackageId>
+    <PackageProjectUrl>https://github.com/HungryDoctor/UsbSectors</PackageProjectUrl>
+    <PackageReleaseNotes>Added support for .NetCore 3.1</PackageReleaseNotes>
+    <PackageTags>win32 WinAPI usb flash drive sector raw keyboard language blink </PackageTags>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
     <LangVersion>latest</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Base\IUsbDeviceEventHelper.cs" />
-    <Compile Include="CustomStructs\BootSectorInfo.cs" />
-    <Compile Include="CustomStructs\CppStructs\DEV_BROADCAST_DEVICEINTERFACE.cs" />
-    <Compile Include="CustomStructs\CppStructs\DEV_BROADCAST_DEVICEINTERFACE_1.cs" />
-    <Compile Include="CustomStructs\CppStructs\DEV_BROADCAST_HDR.cs" />
-    <Compile Include="CustomStructs\CppStructs\DEV_BROADCAST_VOLUME.cs" />
-    <Compile Include="CustomStructs\CppStructs\FLASHWINFO.cs" />
-    <Compile Include="CustomStructs\CppStructs\LASTINPUTINFO.cs" />
-    <Compile Include="CustomStructs\CppStructs\SP_DEVICE_INTERFACE_DATA.cs" />
-    <Compile Include="CustomStructs\CppStructs\SP_DEVICE_INTERFACE_DETAIL_DATA.cs" />
-    <Compile Include="CustomStructs\CppStructs\SP_DEVINFO_DATA.cs" />
-    <Compile Include="CustomStructs\CppStructs\STORAGE_DEVICE_NUMBER.cs" />
-    <Compile Include="CustomStructs\DeviceInfo.cs" />
-    <Compile Include="CustomStructs\DiskSpaceLayout.cs" />
-    <Compile Include="CustomStructs\Enums\DeviceControlCode.cs" />
-    <Compile Include="CustomStructs\Enums\DeviceEvent.cs" />
-    <Compile Include="CustomStructs\Enums\DeviceType.cs" />
-    <Compile Include="CustomStructs\Enums\DiGetClassFlags.cs" />
-    <Compile Include="CustomStructs\Enums\DriveType.cs" />
-    <Compile Include="CustomStructs\Enums\ECreationDisposition.cs" />
-    <Compile Include="CustomStructs\Enums\EFileAccess.cs" />
-    <Compile Include="CustomStructs\Enums\EFileAttributes.cs" />
-    <Compile Include="CustomStructs\Enums\EFileShare.cs" />
-    <Compile Include="CustomStructs\Enums\EFileSystemFeature.cs" />
-    <Compile Include="CustomStructs\Enums\EMoveMethod.cs" />
-    <Compile Include="CustomStructs\Enums\FATxType.cs" />
-    <Compile Include="CustomStructs\Enums\FlashWSettings.cs" />
-    <Compile Include="CustomStructs\Enums\HKL.cs" />
-    <Compile Include="CustomStructs\Enums\KLF.cs" />
-    <Compile Include="CustomStructs\Enums\LanguageId.cs" />
-    <Compile Include="CustomStructs\Enums\StorageBusType.cs" />
-    <Compile Include="CustomStructs\IdleTimeInfo.cs" />
-    <Compile Include="CustomStructs\StorageDeviceInfo.cs" />
-    <Compile Include="CustomStructs\UsbDeviceEvents\UsbDeviceArrivedEventArgs.cs" />
-    <Compile Include="CustomStructs\UsbDeviceEvents\UsbDeviceExceptionEventArgs.cs" />
-    <Compile Include="CustomStructs\UsbDeviceInfo.cs" />
-    <Compile Include="CustomStructs\UsbDeviceEvents\UsbDeviceRemovedEventArgs.cs" />
-    <Compile Include="CustomStructs\VolumeInformation.cs" />
-    <Compile Include="Keyboard.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Blink.cs" />
-    <Compile Include="ConstValues\Win32Constants.cs" />
-    <Compile Include="UsbDevice.cs" />
-    <Compile Include="UsbDeviceWpfEventHelper.cs" />
-    <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Utils\Win32Utils.cs" />
-    <Compile Include="Utils\NativeMethods.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

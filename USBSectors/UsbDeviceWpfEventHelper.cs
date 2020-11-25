@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using USBSectors.Base;
+using USBSectors.Base.Interfaces;
 using USBSectors.ConstValues;
 using USBSectors.CustomStructs.CppStructs;
 using USBSectors.CustomStructs.Enums;

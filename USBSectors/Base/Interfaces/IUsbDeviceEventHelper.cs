@@ -1,7 +1,7 @@
 ﻿using System;
 using USBSectors.CustomStructs.UsbDeviceEvents;
 
-namespace USBSectors.Base
+namespace USBSectors.Base.Interfaces
 {
     public interface IUsbDeviceEventHelper : IDisposable
     {
