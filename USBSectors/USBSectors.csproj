@@ -4,16 +4,16 @@
     <TargetFrameworks>net451;netcoreapp3.1-windows</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <Product>USBSectors library</Product>
-    <Description>Library allows to read/write raw sectors from/to USB flash drive, make window blink and change keyboard layout through Win32</Description>
+    <Description>Library allows to read/write raw sectors from/to USB flash drive, catch inject/eject USB flash drive event, make window blink and change keyboard layout through Win32</Description>
     <Authors>hungry_doctor</Authors>
     <Company>hungry_doctor</Company>
     <Copyright>Copyright ©  2020</Copyright>
     <PackageId>USBSectors</PackageId>
     <PackageProjectUrl>https://github.com/HungryDoctor/UsbSectors</PackageProjectUrl>
     <PackageReleaseNotes>Added support for .NetCore 3.1</PackageReleaseNotes>
-    <PackageTags>win32 WinAPI usb flash drive sector raw keyboard language blink </PackageTags>
+    <PackageTags>Win32 WinAPI usb flash drive sector raw keyboard language blink</PackageTags>
     <LangVersion>latest</LangVersion>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <OutputPath>bin\$(Configuration)\</OutputPath>
