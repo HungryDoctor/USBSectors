@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using USBSectors;
-using USBSectors.Base;
+using USBSectors.Base.Interfaces;
 using USBSectors.CustomStructs.UsbDeviceEvents;
 using USBSectors.Utils;
 

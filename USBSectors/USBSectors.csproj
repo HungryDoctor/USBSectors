@@ -6,7 +6,7 @@
     <Description>Library allows to read/write raw sectors from/to USB flash drive, make window blink and change keyboard layout through Win32</Description>
     <Authors>hungry_doctor</Authors>
     <Company>hungry_doctor</Company>
-    <Copyright>Copyright 2020</Copyright>
+    <Copyright>Copyright ©  2020</Copyright>
     <PackageId>USBSectors</PackageId>
     <PackageProjectUrl>https://github.com/HungryDoctor/UsbSectors</PackageProjectUrl>
     <PackageReleaseNotes>Added support for .NetCore 3.1</PackageReleaseNotes>
