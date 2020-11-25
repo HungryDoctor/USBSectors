@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net451;netcoreapp3.1-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
     <Product>USBSectors library</Product>
     <Description>Library allows to read/write raw sectors from/to USB flash drive, make window blink and change keyboard layout through Win32</Description>
     <Authors>hungry_doctor</Authors>
@@ -11,12 +12,20 @@
     <PackageProjectUrl>https://github.com/HungryDoctor/UsbSectors</PackageProjectUrl>
     <PackageReleaseNotes>Added support for .NetCore 3.1</PackageReleaseNotes>
     <PackageTags>win32 WinAPI usb flash drive sector raw keyboard language blink </PackageTags>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
     <LangVersion>latest</LangVersion>
-    <UseWPF>true</UseWPF>
     <Version>1.1.0</Version>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <RepositoryType>Git</RepositoryType>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/HungryDoctor/UsbSectors</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
   
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -25,11 +34,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+
   <ItemGroup>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
   </ItemGroup>
 
 </Project>
